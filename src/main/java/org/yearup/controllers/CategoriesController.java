@@ -2,6 +2,8 @@ package org.yearup.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.yearup.data.CategoryDao;
@@ -10,6 +12,7 @@ import org.yearup.models.Category;
 import org.yearup.models.Product;
 
 import java.util.List;
+import java.util.Map;
 
 // add the annotations to make this a REST controller
 @RestController
@@ -68,10 +71,19 @@ public class CategoriesController
     @PutMapping("/{id}")
     // add annotation to ensure that only an ADMIN can call this function
     @Secured("ROLE_ADMIN")
-    public void updateCategory(@PathVariable int id, @RequestBody Category category)
-    {
-        // update the category by id
-        categoryDao.update(id, category);
+    public ResponseEntity<Map<String, String>> updateCategory(@PathVariable int id, @RequestBody Category category) {
+        try {
+            categoryDao.update(id, category);
+            // Explicitly return a JSON response with Content-Type set to application/json
+            return ResponseEntity.ok()
+                                 .header("Content-Type", "application/json")
+                                 .body(Map.of("message", "Category updated successfully"));
+        } catch (Exception e) {
+            // Explicitly return an error JSON response with Content-Type set to application/json
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .header("Content-Type", "application/json")
+                                 .body(Map.of("error", "Failed to update category", "details", e.getMessage()));
+        }
     }
 
 
