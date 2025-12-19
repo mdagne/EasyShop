@@ -259,7 +259,7 @@ class ShoppingCartService {
         // For now, just show an alert. You can implement actual checkout logic later
         alert(`Proceeding to checkout with total: $${parseFloat(this.cart.total).toFixed(2)}\n\nThis is a placeholder. Implement checkout functionality as needed.`);
         
-        // TODO: Implement actual checkout functionality
+
         // This could redirect to a checkout page, create an order, etc.
     }
 }
