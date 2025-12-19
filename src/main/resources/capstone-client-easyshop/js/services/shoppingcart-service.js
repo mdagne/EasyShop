@@ -10,9 +10,9 @@ class ShoppingCartService {
     addToCart(productId)
     {
         const url = `${config.baseUrl}/cart/products/${productId}`;
-        // const headers = userService.getHeaders();
+        const headers = userService.getHeaders();
 
-        axios.post(url, {})// ,{headers})
+        axios.post(url, {}, {headers})
             .then(response => {
                 this.setCart(response.data)
 
@@ -47,8 +47,9 @@ class ShoppingCartService {
     {
 
         const url = `${config.baseUrl}/cart`;
+        const headers = userService.getHeaders();
 
-        axios.get(url)
+        axios.get(url, {headers})
             .then(response => {
                 this.setCart(response.data)
 
@@ -145,8 +146,9 @@ class ShoppingCartService {
     {
 
         const url = `${config.baseUrl}/cart`;
+        const headers = userService.getHeaders();
 
-        axios.delete(url)
+        axios.delete(url, {headers})
              .then(response => {
                  this.cart = {
                      items: [],
@@ -176,7 +178,8 @@ class ShoppingCartService {
     updateCartDisplay()
     {
         try {
-            const itemCount = this.cart.items.length;
+            // Sum up the quantities of all items, not just count the number of different items
+            const itemCount = this.cart.items.reduce((total, item) => total + item.quantity, 0);
             const cartControl = document.getElementById("cart-items")
 
             cartControl.innerText = itemCount;
