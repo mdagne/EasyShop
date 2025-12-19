@@ -99,10 +99,59 @@ class ShoppingCartService {
         contentDiv.appendChild(cartHeader)
         main.appendChild(contentDiv);
 
-        // let parent = document.getElementById("cart-item-list");
-        this.cart.items.forEach(item => {
-            this.buildItem(item, contentDiv)
-        });
+        // Display empty cart message if no items
+        if (this.cart.items.length === 0) {
+            const emptyMessage = document.createElement("div");
+            emptyMessage.style.textAlign = "center";
+            emptyMessage.style.padding = "40px";
+            emptyMessage.style.color = "#666";
+            emptyMessage.innerHTML = "<h3>Your cart is empty</h3><p>Add some items to get started!</p>";
+            contentDiv.appendChild(emptyMessage);
+        } else {
+            // let parent = document.getElementById("cart-item-list");
+            this.cart.items.forEach(item => {
+                this.buildItem(item, contentDiv)
+            });
+        }
+
+        // Add cart summary with total and checkout button
+        const cartSummary = document.createElement("div");
+        cartSummary.classList.add("cart-summary");
+        cartSummary.style.marginTop = "20px";
+        cartSummary.style.padding = "20px";
+        cartSummary.style.borderTop = "2px solid #ddd";
+        cartSummary.style.display = "flex";
+        cartSummary.style.justifyContent = "space-between";
+        cartSummary.style.alignItems = "center";
+
+        const totalDiv = document.createElement("div");
+        const totalLabel = document.createElement("h3");
+        totalLabel.style.margin = "0";
+        totalLabel.innerText = "Total: ";
+        const totalAmount = document.createElement("span");
+        totalAmount.style.color = "#28a745";
+        totalAmount.style.fontSize = "1.5em";
+        totalAmount.style.fontWeight = "bold";
+        totalAmount.innerText = `$${parseFloat(this.cart.total).toFixed(2)}`;
+        totalLabel.appendChild(totalAmount);
+        totalDiv.appendChild(totalLabel);
+
+        const checkoutButton = document.createElement("button");
+        checkoutButton.classList.add("btn");
+        checkoutButton.classList.add("btn-success");
+        checkoutButton.style.padding = "10px 30px";
+        checkoutButton.style.fontSize = "1.1em";
+        checkoutButton.innerText = "Checkout";
+        checkoutButton.disabled = this.cart.items.length === 0;
+        if (checkoutButton.disabled) {
+            checkoutButton.style.opacity = "0.6";
+            checkoutButton.style.cursor = "not-allowed";
+        }
+        checkoutButton.addEventListener("click", () => this.checkout());
+
+        cartSummary.appendChild(totalDiv);
+        cartSummary.appendChild(checkoutButton);
+        contentDiv.appendChild(cartSummary);
     }
 
     buildItem(item, parent)
@@ -119,9 +168,16 @@ class ShoppingCartService {
         let photoDiv = document.createElement("div");
         photoDiv.classList.add("photo")
         let img = document.createElement("img");
-        img.src = `/images/products/${item.product.imageUrl}`
+        // Use relative path like product template, with fallback to no-image.jpg
+        const imageUrl = item.product.imageUrl || "no-image.jpg";
+        img.src = `images/products/${imageUrl}`
+        img.alt = item.product.name
+        img.onerror = function() {
+            // If image fails to load, use the no-image fallback
+            this.src = "images/products/no-image.jpg";
+        }
         img.addEventListener("click", () => {
-            showImageDetailForm(item.product.name, img.src)
+            showImageDetailForm(item.product.name, `/images/products/${imageUrl}`)
         })
         photoDiv.appendChild(img)
         let priceH4 = document.createElement("h4");
@@ -187,6 +243,24 @@ class ShoppingCartService {
         catch (e) {
 
         }
+    }
+
+    checkout()
+    {
+        if (this.cart.items.length === 0)
+        {
+            const data = {
+                error: "Your cart is empty. Please add items before checkout."
+            };
+            templateBuilder.append("error", data, "errors");
+            return;
+        }
+
+        // For now, just show an alert. You can implement actual checkout logic later
+        alert(`Proceeding to checkout with total: $${parseFloat(this.cart.total).toFixed(2)}\n\nThis is a placeholder. Implement checkout functionality as needed.`);
+        
+        // TODO: Implement actual checkout functionality
+        // This could redirect to a checkout page, create an order, etc.
     }
 }
 
