@@ -57,4 +57,11 @@ public class ShoppingCartItem
 
         return subTotal.subtract(discountAmount);
     }
+
+    public ShoppingCartItem(int productId, int quantity, BigDecimal price) {
+        this.product = new Product();
+        this.product.setProductId(productId);
+        this.product.setPrice(price);
+        this.quantity = quantity;
+    }
 }

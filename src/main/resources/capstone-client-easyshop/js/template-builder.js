@@ -12,7 +12,7 @@ class TemplateBuilder
                     const html = Mustache.render(template, value);
                     document.getElementById(target).innerHTML = html;
 
-                    if(callback) callback();
+                    if(callback && templateName != "cart") callback();
                 }
                 catch(e)
                 {

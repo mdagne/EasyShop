@@ -71,6 +71,13 @@ function showCart()
     cartService.loadCartPage();
 }
 
+function showCheckout()
+{
+    // Build the base template and then render via service
+    templateBuilder.build('checkout', {}, 'main');
+    checkoutService.loadCheckoutPage();
+}
+
 function clearCart()
 {
     cartService.clearCart();
